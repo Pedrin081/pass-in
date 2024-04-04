@@ -1,4 +1,5 @@
 import react from '../assets/react.svg'
+import { NavLinks } from './navlink'
 
 export function Header(){
 
@@ -7,8 +8,8 @@ export function Header(){
     
     
     <nav className='flex items-center gap-5'>
-        <a href="" className='font-medium text-sm text-zinc-300'>Eventos</a>
-        <a href="" className='font-medium text-sm text-zinc-300'>Participantes</a>
+        <NavLinks href="/eventos"> Eventos </NavLinks>
+        <NavLinks href="/participantes" > Paticipantes </NavLinks>
     </nav>
     </div>
     )
