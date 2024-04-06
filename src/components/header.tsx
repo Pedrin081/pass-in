@@ -3,7 +3,7 @@ import { NavLinks } from './navlink'
 
 export function Header(){
 
-    return (<div className='flex items-center gap-5 py-2'>
+    return (<div className='flex items-center gap-5 py-1'>
     <img src={react} alt="" />
     
     

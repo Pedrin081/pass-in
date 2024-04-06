@@ -4,19 +4,50 @@ import { Table } from "./table/table"
 import { TableHeader } from "./table/table-header"
 import { TableCell } from "./table/table-td"
 import { TableRows } from "./table/table-rows"
+import { ChangeEvent, useState } from "react"
+import { attendees } from "./data/attendee"
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
+
+dayjs.locale('pt-br')
+dayjs.extend(relativeTime)
 export function Attendeelist() {
+
+    const [valorDoInput, alteraValorDoInput] = useState ('')
+    const [page, setPage] = useState(1)
+    const TotalPages =  (Math.ceil(attendees.length / 10)) 
+
+
+        function onSearchInputChenged(event: ChangeEvent<HTMLInputElement>) {
+            alteraValorDoInput(event.target.value)
+        }
+
+        function goToNextPage(){
+            setPage(page + 1)
+        }
+        function goTopreviousPage(){
+            setPage(page - 1)
+        }
+        function goToFinishPage(){
+            setPage(TotalPages)
+        }
+        function goToFirstPage(){
+            setPage(1)
+        }
 
     return (
         <div className="flex flex-col gap-4">
             <div className=" flex gap-3 items-center ">
                 <h1 className="text-2xl font-bold">Participantes</h1>
-                <div className="px-3 w-72 py-1.5 b border border-white/10 rouded-lg text-sm flex items-center gap-3">
+                <div className="px-3 w-72 py-1.5 border border-white/10 rouded-lg flex items-center gap-3">
                     <Search className="size-4  text-emerald-300 " />
-                    <input className="bg-transparent  flex-1 outline-none outline-0 border rounded-md" type="text" placeholder="Buscar participante" />
+                    <input onChange = {onSearchInputChenged}  className="bg-transparent flex-1 outline-none border-0 p-0 text-sm" type="text" placeholder="Buscar participante" />
                 </div>
             </div>
 
+                {valorDoInput}
             <Table>
                 <thead>
                     <tr className="border border-white/10">
@@ -31,22 +62,23 @@ export function Attendeelist() {
                     </tr>
                 </thead>
                 <tbody>
-                    {Array.from({ length: 8 }).map((_, i) => {
+                    {attendees.slice((page - 1) * 10, page * 10).map((attendee) => {
                         return (
-                            <TableRows key={i} className="border-b border-white/10 hover:bg-white/10 ">
+                            <TableRows key={attendee.id} className=" border-b border-white/10 hover:bg-white/10 ">
 
                                 <TableCell className="py-3 px-4 text-sm font-semibold">   <input type="checkbox" className="size-4 bg-black    /20 rounded border-white/10 " /> </TableCell>
 
-                                <TableCell>2323</TableCell>
+                                <TableCell>{attendee.id}</TableCell>
                                 <TableCell>
                                     <div className="flex flex-col gap-1">
-                                        <span className="font-semibold text-white ">Pedro victor</span>
-                                        <span>Email@2332</span>
+                                        <span className="font-semibold text-white ">{attendee.name}</span>
+                                        <span>{attendee.email}</span>
                                     </div>
                                 </TableCell>
 
-                                <TableCell >7 dias atrás</TableCell>
-                                <TableCell >2 dias atrás</TableCell>
+                                <TableCell>{dayjs().to(attendee.createdAT)}</TableCell>
+                                <TableCell>{dayjs().to(attendee.chekedInAT)}</TableCell>
+                               
                                 <TableCell >
                                     <IconButton transparent={true}>
                                         <MoreHorizontal className="size-4" />
@@ -59,24 +91,24 @@ export function Attendeelist() {
                 <tfoot>
                     <tr >
                         <TableCell colSpan={3} className="py-3 px-4 text-sm text-zinc-300">
-                            Mostrando 10 de 200 itens
+                            Mostrando 10 de {attendees.length} itens
                         </TableCell>
                         <td colSpan={3} className="py-3 px-4 text-sm text-zinc-300 text-right">
 
                             <div className="inline-flex items-center gap-8">
-                                <span>pagina 1 de 100</span>
+                                <span>pagina {page} de {TotalPages}</span>
 
                                 <div className="flex gap-1.5">
-                                    <IconButton >
+                                    <IconButton onClick={goToFirstPage} disabled={page === 1} >
                                         <ChevronsLeft className="size-4" />
                                     </IconButton>
-                                    <IconButton >
-                                        <ChevronLeft className="size-4" />
+                                    <IconButton  onClick={goTopreviousPage} disabled={page === 1}>
+                                        <ChevronLeft className="size-4"  />
                                     </IconButton>
-                                    <IconButton >
+                                    <IconButton onClick={goToNextPage} disabled={page === TotalPages} >
                                         <ChevronRight className="size-4" />
                                     </IconButton>
-                                    <IconButton >
+                                    <IconButton onClick={goToFinishPage} disabled={page === TotalPages}>
                                         <ChevronsRight className="size-4" />
                                     </IconButton>
 
